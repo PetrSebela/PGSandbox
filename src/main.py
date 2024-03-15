@@ -1,5 +1,7 @@
 import pygame
 from pygame import Vector2
+from config import Config
+from chunk_manager import ChunkManager 
 
 pygame.init()
 pygame.font.init()
@@ -12,9 +14,14 @@ CAMERA_SPEED = 2
 movement_direction = Vector2()
 camera_position = Vector2()
 
+chunk_manager = ChunkManager()
+
+
 def quit_app():
+    chunk_manager.stop_thread()
     pygame.quit()
     exit(0)
+
 
 if __name__ == '__main__':
     while True:
@@ -32,5 +39,8 @@ if __name__ == '__main__':
 
         camera_position += movement_direction * CAMERA_SPEED
         
+        for screen_y in range(-1, int(RESOLUTION[1] / Config.TEXTURE_SIZE) + 1):
+            for screen_x in range(-1, int(RESOLUTION[0] / Config.TEXTURE_SIZE) + 1):
+                WINDOW.blit(chunk_manager.get_chunk(screen_x, screen_y), (screen_x * Config.TEXTURE_SIZE, screen_y * Config.TEXTURE_SIZE))
 
         pygame.display.flip()
