@@ -1,2 +1,2 @@
 class Config:
-    TEXTURE_SIZE = 512
+    TEXTURE_SIZE = 256

@@ -1,6 +1,8 @@
 from pygame import Surface
+import pygame
 from config import Config
 from generator import get_texture_at
+from lib.name_generator import get_unique_random_name
 import threading
 
 
@@ -14,11 +16,7 @@ class Chunk:
     def __init__(self, x:int, y:int) -> Surface:
         self.texture = Surface((Config.TEXTURE_SIZE,Config.TEXTURE_SIZE))
         self.position = (x, y)
-
-
-    def generate_texture(self):
-        texture_array = get_texture_at(*self.position, Config.TEXTURE_SIZE)
-        push_array2d_to_texture_instance(texture_array, self.texture)
+        self.name = get_unique_random_name()
 
 
 class ChunkManager:
@@ -27,28 +25,32 @@ class ChunkManager:
         self.to_generate = []
         self.active = True
 
-        THREAD_COUNT = 2
+        THREAD_COUNT = 1
         self.gen_lock = threading.Lock()
-        self.threads = [threading.Thread(target=self.process_chunks) for _ in range(THREAD_COUNT)]
+        self.threads = [threading.Thread(target=self.thread_worker,args=(thread_id,)) for thread_id in range(THREAD_COUNT)]
+        
         for thread in self.threads:
             thread.start()
 
 
-    def process_chunks(self):
+    def thread_worker(self, worker_id):
         while self.active:
-            processed_chunk = None
-            with self.gen_lock:
-                if len(self.to_generate) > 0:
-                    processed_chunk = self.to_generate.pop(0)
+            chunk = None
+            if len(self.to_generate) > 0:
+                with self.gen_lock:
+                    chunk = self.to_generate.pop(0)
 
-            if processed_chunk:            
-                processed_chunk.generate_texture()
+            if chunk:            
+                # print(f"Thread {worker_id} is processing {chunk.name}")
+                texture_array = get_texture_at(*chunk.position, Config.TEXTURE_SIZE)
+                push_array2d_to_texture_instance(texture_array, chunk.texture)
 
 
     def stop_thread(self):
         self.active = False
         for thread in self.threads:
             thread.join()
+
 
     def generate_new_chunk(self, x:int, y:int):
         chunk = Chunk(x, y)
@@ -57,9 +59,9 @@ class ChunkManager:
         return chunk
 
 
-    def get_chunk(self, x:int, y:int) -> Surface:
+    def get_chunk(self, x:int, y:int) -> Chunk:
         chunk_key = (x, y)
         if chunk_key not in self.chunks:
             self.generate_new_chunk(x, y)
 
-        return self.chunks[chunk_key].texture
+        return self.chunks[chunk_key]
