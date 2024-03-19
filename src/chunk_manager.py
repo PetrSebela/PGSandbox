@@ -2,7 +2,7 @@ from pygame import Surface
 import pygame
 from config import Config
 from generator import get_texture_at
-from lib.name_generator import get_unique_random_name
+from name_generator import get_unique_random_name
 import threading
 
 
@@ -41,7 +41,7 @@ class ChunkManager:
                     chunk = self.to_generate.pop(0)
 
             if chunk:            
-                # print(f"Thread {worker_id} is processing {chunk.name}")
+                print(f"Thread {worker_id} is processing {chunk.name}")
                 texture_array = get_texture_at(*chunk.position, Config.TEXTURE_SIZE)
                 push_array2d_to_texture_instance(texture_array, chunk.texture)
 
