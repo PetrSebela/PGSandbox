@@ -42,8 +42,7 @@ class ChunkManager:
 
             if chunk:            
                 print(f"Thread {worker_id} is processing {chunk.name}")
-                texture_array = get_texture_at(*chunk.position, Config.TEXTURE_SIZE)
-                push_array2d_to_texture_instance(texture_array, chunk.texture)
+                chunk.texture = get_texture_at(*chunk.position, Config.TEXTURE_SIZE)
 
 
     def stop_thread(self):

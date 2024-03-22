@@ -11,7 +11,6 @@ pygame.font.init()
 RESOLUTION = (1920, 1080)
 WINDOW = pygame.display.set_mode(RESOLUTION)
 CONSOLAS_PATH = pygame.font.match_font('Ubuntu mono')
-print(CONSOLAS_PATH)
 CHUNK_FONT = pygame.font.Font(CONSOLAS_PATH, 18)
 
 CAMERA_SPEED = 3
@@ -65,8 +64,11 @@ if __name__ == '__main__':
 
 
         WINDOW.fill((0, 0, 25))
-        for screen_y in range(-1, int(RESOLUTION[1] / Config.TEXTURE_SIZE) + 2):
-            for screen_x in range(-1, int(RESOLUTION[0] / Config.TEXTURE_SIZE) + 2):  
+        # for screen_y in range(-1, int(RESOLUTION[1] / Config.TEXTURE_SIZE) + 2):
+        #     for screen_x in range(-1, int(RESOLUTION[0] / Config.TEXTURE_SIZE) + 2):  
+        for screen_y in range(0, int(RESOLUTION[1] / Config.TEXTURE_SIZE) + 1):
+            for screen_x in range(0, int(RESOLUTION[0] / Config.TEXTURE_SIZE) + 1):  
+
                 cc_x = screen_x + floor(camera_position.x / Config.TEXTURE_SIZE)
                 cc_y = screen_y + floor(camera_position.y / Config.TEXTURE_SIZE)
 
